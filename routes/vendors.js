@@ -3,9 +3,8 @@ var router = express.Router()
 var path = require('path')
 var dateTime = require('node-datetime');
 
+let VendorModel = require('../models/VendorModel')
 
-
-let UserModel = require('../models/UserModel')
 
 router.use(function(req,res,next){
 
@@ -18,11 +17,10 @@ router.use(function(req,res,next){
 })
 
 
-
 router.route('/')
 		.get(function(req,res){
 
-			UserModel.find({},function(err,result){
+			VendorModel.find({},function(err,result){
 
 				if(err){
 					throw err;
@@ -35,23 +33,23 @@ router.route('/')
 		})
 
 
-router.route('/user/add')
+router.route('/vendor/add')
 		.post(function(req,res){
 
 
 			console.log(req.body)
 
-			var userModel = new UserModel({
+			var vendorModel = new VendorModel({
 
-				userName: req.body['userName'],
-				userPassword: req.body['userPassword'],
-				userMobile: req.body['userMobile'],
-				dateAdded : Date(),
-				dateModified : null
+				vendorName: req.body['vendorName'],
+				vendorMobile: req.body['vendorMobile'],
+				vendorAddress: req.body['vendorAddress'],
+				vendorAdded : Date(),
+				vendorModified : null
 			})
 
 
-			UserModel.findOne({$or:[{'userName':req.body.userName},{'userMobile':req.body.userMobile}]},function(err,result){
+			VendorModel.findOne({$or:[{'vendorName':req.body.vendorName},{'vendorMobile':req.body.vendorMobile}]},function(err,result){
 
 
 				if(err){
@@ -62,19 +60,19 @@ router.route('/user/add')
 					 var errmsg = {
 						'status' : 401,
 						'message' : 'failure',
-						'description' : "User with username or mobile is already registered"
+						'description' : "Vendor with username or mobile is already registered"
 					}
 					res.json(errmsg)
 
 				}else{
-					userModel.save()
+					vendorModel.save()
 						.then(doc => {
 									console.log(doc);
 									var r = {
 
 										'status' : 200,
 										'message' : 'success',
-										'descriptiton' : 'User successfully added',
+										'description' : 'Vendor successfully added',
 										'object_id' : doc._id
 									};
 									//res.setHeader('Content-Type', 'application/json');
@@ -88,7 +86,7 @@ router.route('/user/add')
 
 										'status' : 401,
 										'message' : 'failure',
-										'descriptiton' : 'User Not added successfully added',
+										'description' : 'Vendor Not added successfully added',
 										
 									};
 									res.json(r)
@@ -104,10 +102,10 @@ router.route('/user/add')
 		})
 
 
-router.route('/user/:id')
+router.route('/vendor/:id')
 		.get(function(req,res){
 
-			UserModel.find({_id: req.params.id},function(err,result){
+			VendorModel.find({_id: req.params.id},function(err,result){
 				if(err){
 					throw err;
 				}else{
@@ -120,15 +118,12 @@ router.route('/user/:id')
 
 			var updt = {
 
-				'userType' : req.body.userType,
-				'userBusinessName' : req.body.userBusinessName,
-				'userBusinessAddress' : req.body.userBusinessAddress,
-				'userBusinessContact' : req.body.userBusinessContact,
-				'userBusinessEmail' : req.body.userBusinessEmail,
+				
+				'vendorMobile' : req.body.vendorMobile,
 				'dateModified' : Date()
 			}
 
-			UserModel.updateOne({_id: req.params.id},{$set : updt},function(err,result){
+			VendorModel.updateOne({_id: req.params.id},{$set : updt},function(err,result){
 				if(err){
 					throw err
 				}
@@ -139,18 +134,5 @@ router.route('/user/:id')
 
 		})
 
-
-router.route('/user/:name/:pass')
-		.get(function(req,res){
-
-			UserModel.find({userName: req.params.name,userPassword: req.params.pass},function(err,result){
-
-				if(err){
-					throw err
-				}
-
-				res.send(result)
-			})
-		})
 
 module.exports = router;

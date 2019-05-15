@@ -89,14 +89,30 @@ router.route('/product/add')
 
 					})
 
-			productModel.save()
+
+			ProductModel.findOne({'productName':req.body.productName},function(err,result){
+
+				if(err){
+					throw err
+				}
+
+				if(result){
+					var errmsg = {
+						'status' : 401,
+						'message' : 'failure',
+						'description' : "Product with name is already registered"
+					}
+					res.json(errmsg)
+				}else{
+
+					productModel.save()
 						.then(doc => {
 									console.log(doc);
 									var r = {
 
 										'status' : 200,
 										'message' : 'success',
-										'descriptiton' : 'Product successfully added',
+										'description' : 'Product successfully added',
 										'object_id' : doc._id
 									};
 									//res.setHeader('Content-Type', 'application/json');
@@ -106,7 +122,19 @@ router.route('/product/add')
 								})
 								.catch(err => {
 									console.log(err);
+									var r = {
+
+										'status' : 401,
+										'message' : 'failure',
+										'description' : 'Product Not added successfully added',
+										
+									};
+									res.json(r)
 								})
+				}
+			})
+
+			
 		})
 
 

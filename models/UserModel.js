@@ -6,14 +6,16 @@ let UserSchema = new mongoose.Schema({
 		userId : String,
 		userName : String,
 		userPassword : String,
-		userEmail: String,
 		userMobile: String,
 		userType: String,
 		userBusinessName: String,
 		userBusinessAddress: String,
 		userBusinessContact: String,
+		userBusinessEmail: String,
 		userKyc: String,
-		userKycDocument: String
+		userKycDocument: String,
+		dateAdded: String,
+		dateModified: String
 })
 
 
